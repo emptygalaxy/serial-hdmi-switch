@@ -1,8 +1,24 @@
 {
   "name": "serial-hdmi-switch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "@types/serialport": "^8.0.0",
     "serialport": "^9.0.0"
-  }
+  },
+  "main": "dist/HDMISwitch.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "dist/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emptygalaxy/serial-hdmi-switch.git"
+  },
+  "author": "Nick Timman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emptygalaxy/serial-hdmi-switch/issues"
+  },
+  "homepage": "https://github.com/emptygalaxy/serial-hdmi-switch#readme",
+  "description": ""
 }
