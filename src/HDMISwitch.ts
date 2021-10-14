@@ -3,117 +3,110 @@ import SerialPort = require('serialport');
 export class HDMISwitch
 {
     path: string;
-    private commandEnd:string = "R";
+    options: HDMISwitchOptions;
+
     private serial:SerialPort;
 
-    constructor(path:string)
-    {
+    constructor(
+        path: string,
+        options?: HDMISwitchOptions
+    ) {
         this.path = path;
+        this.options = options ? options : DefaultHDMISwitchOptions
 
         this.serial = new SerialPort(this.path, {
             autoOpen: true,
-            baudRate: 9600
+            baudRate: this.options.Baud,
         }, err => {
             if (err)
             {
-                return console.log('Error: ', err.message)
+                return console.log(`[serial-hdmi-switch] Error: ${err.message}`)
             }
         });
 
         // The open event is always emitted
-        this.serial.on('open', function() {
+        this.serial.on('open', () => {
             // open logic
-            console.log('open');
+            console.log(`[serial-hdmi-switch] Opened Serial Connection to ${path} at ${this.options.Baud} baud.`);
         });
-
-
-        // this.serial.on('data', function (data:Buffer) {
-        //
-        //     let series:number[] = [0x26, 0xcb, 0xa1, 0x29, 0x01, 0xc6, 0x79, 0x01, 0x06, 0x69, 0x73, 0xd6, 0x16];
-        //     let test:Buffer = Buffer.from(series);
-        //
-        //     if(!data.equals(test) && !data.equals(test2) && !data.equals(test3))
-        //     {
-        //         console.log('Difference:', data, data.toString());
-        //     }
-        // });
     }
 
-    private sendCommand(command:string)
+    private sendCommand(command: string)
     {
-        let message:string = command + this.commandEnd;
-        console.log('send message: ', message);
+        let message: string = command + this.options.CommandEnd;
+        console.log(`[serial-hdmi-switch] Sending Message: ${message}.`);
         this.serial.write(message, 'utf8', (error?: Error | null) => {
             if (error) {
-                return console.log('Error on write: ', error.message)
+                return console.log(`[serial-hdmi-switch] Error on write: ${error.message}`)
             }
-            console.log('message written');
+            console.log('[serial-hdmi-switch] Message written.');
         });
     }
 
     public powerOn()
     {
-        this.sendCommand(SerialCommand.PowerOn);
+        this.sendCommand(this.options.Commands.PowerOn);
     }
 
     public powerOff()
     {
-        this.sendCommand(SerialCommand.PowerOff);
+        this.sendCommand(this.options.Commands.PowerOff);
     }
 
-    public setInput(source:Source)
+    public setInput(source: number)
     {
-        let command: SerialCommand | null = HDMISwitch.getSourceCommand(source);
-
-        if(command != null)
-            this.sendCommand(command);
+        this.sendCommand(
+            this.options.Commands.OutputSelect.replace('%d', source.toString(10))
+        );
     }
 
-    public setInputIndex(index:number)
+    public setInputIndex(index: number)
     {
-        let sources:Source[] = [Source.HDMI_1, Source.HDMI_2, Source.HDMI_3, Source.HDMI_4, Source.HDMI_5];
-        if(index >= 0 && index < sources.length)
-        {
-            let source:Source = sources[Math.round(index)];
-            this.setInput(source);
+        if (index >= this.options.MaxInputs) {
+            throw new Error('Requested Input is outside the range specified in HDMI Switch Options.')
         }
-    }
 
-    private static getSourceCommand(source:Source):SerialCommand|null
-    {
-        switch(source)
-        {
-            case Source.HDMI_1:
-                return SerialCommand.HDMI_1;
-            case Source.HDMI_2:
-                return SerialCommand.HDMI_2;
-            case Source.HDMI_3:
-                return SerialCommand.HDMI_3;
-            case Source.HDMI_4:
-                return SerialCommand.HDMI_4;
-            case Source.HDMI_5:
-                return SerialCommand.HDMI_5;
+        if (index < 0) {
+            throw new Error('Requested Input is below 0. No such input exists.')
         }
-        return null;
+
+        this.setInput(index + (this.options.ZeroIndexed ? 0 : 1))
     }
 }
 
-enum SerialCommand
+interface HDMISwitchOptions
 {
-    PowerOn = 'poweron',
-    PowerOff = 'poweroff',
-    HDMI_1 = 'port0',
-    HDMI_2 = 'port1',
-    HDMI_3 = 'port2',
-    HDMI_4 = 'port3',
-    HDMI_5 = 'port4'
+    Commands: SerialCommands;
+    CommandEnd: string;
+    // HDMI Outputs by serial are referred to zero-indexed, example: HDMI 1 is port0.
+    ZeroIndexed: boolean;
+    MaxInputs: number;
+    Baud: number;
 }
 
-export enum Source
+interface SerialCommands
 {
-    HDMI_1,
-    HDMI_2,
-    HDMI_3,
-    HDMI_4,
-    HDMI_5
+    PowerOn: string;
+    PowerOff: string;
+    OutputSelect: string;
 }
+
+const DefaultSerialCommands: SerialCommands = 
+{
+    PowerOn: 'poweron',
+    PowerOff: 'poweroff',
+    // %d is replaced with the Requested Port. 
+    OutputSelect: 'port%d',
+}
+
+const DefaultHDMISwitchOptions: HDMISwitchOptions =
+{
+    Commands: DefaultSerialCommands,
+    CommandEnd: 'R',
+    ZeroIndexed: true,
+    MaxInputs: 5,
+    Baud: 9600,
+}
+
+// Backwards compatble typing.
+export type Source = number;
