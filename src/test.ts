@@ -1,6 +1,23 @@
 import {HDMISwitch, Source} from "./HDMISwitch";
 
-let device:HDMISwitch = new HDMISwitch('/dev/cu.usbserial-40130');
+const ComplicatedExample = () => new HDMISwitch(
+    '/dev/cu.usbserial-145420',
+    {
+        Baud: 57600,
+        ZeroIndexed: false,
+        CommandEnd: '\r',
+        MaxInputs: 4,
+        Commands: {
+            PowerOn: 'OUTON',
+            PowerOff: 'OUTOFF',
+            OutputSelect: 'OUT FR %d',
+        }
+    }
+);
+
+// Simple Example
+let device:HDMISwitch = new HDMISwitch('/dev/cu.usbserial-145420')
+
 let currentInput = 0;
 
 setTimeout(() => {
@@ -11,7 +28,7 @@ setTimeout(() => {
 
         setInterval(()=>{
             currentInput ++;
-            currentInput %= 5;
+            currentInput %= device.options.MaxInputs;
 
             device.setInputIndex(currentInput);
         }, 10000);

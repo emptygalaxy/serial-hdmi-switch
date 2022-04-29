@@ -7,9 +7,12 @@
   },
   "main": "dist/HDMISwitch.js",
   "types": "dist/HDMISwitch.d.ts",
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  },
   "scripts": {
-    "test": "dist/test.js"
+    "test": "dist/test.js",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
