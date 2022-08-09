@@ -2,7 +2,7 @@
   "name": "serial-hdmi-switch",
   "version": "1.0.2",
   "dependencies": {
-    "@types/serialport": "^8.0.0",
+    "@types/serialport": "^8.0.2",
     "serialport": "^9.0.0"
   },
   "main": "dist/HDMISwitch.js",
