@@ -24,11 +24,13 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "clean": "rimraf ./dist/",
     "test": "dist/test.js",
-    "lint": "eslint '**/*.ts'",
-    "fix": "eslint --fix '**/*.ts'",
-    "build": "tsc"
+    "lint": "eslint src/**.ts",
+    "fix": "eslint --fix src/**.ts",
+    "watch": "npm run build && npm link && nodemon",
+    "clean": "rimraf ./dist",
+    "build": "npm run clean && tsc",
+    "prepublishOnly": "npm run lint && npm audit && npm run build"
   },
   "repository": {
     "type": "git",
