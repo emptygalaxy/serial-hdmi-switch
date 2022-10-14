@@ -1,4 +1,4 @@
-import SerialPort = require('serialport');
+import { SerialPort } from 'serialport';
 
 export class HDMISwitch {
   path: string;
@@ -11,8 +11,8 @@ export class HDMISwitch {
     this.options = options ? options : DefaultHDMISwitchOptions;
 
     this.serial = new SerialPort(
-      this.path,
       {
+        path: this.path,
         autoOpen: true,
         baudRate: this.options.Baud,
       },

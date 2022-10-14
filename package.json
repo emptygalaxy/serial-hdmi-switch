@@ -3,11 +3,10 @@
   "version": "1.0.3",
   "dependencies": {
     "@types/serialport": "^8.0.2",
-    "serialport": "^9.0.0"
+    "serialport": "^10.4.0"
   },
   "main": "dist/HDMISwitch.js",
   "types": "dist/HDMISwitch.d.ts",
-  "type": "module",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
@@ -20,9 +19,12 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.0",
     "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
   "scripts": {
+    "clean": "rimraf ./dist/",
     "test": "dist/test.js",
     "lint": "eslint '**/*.ts'",
     "fix": "eslint --fix '**/*.ts'",
