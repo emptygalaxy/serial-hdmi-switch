@@ -1,6 +1,6 @@
 {
   "name": "serial-hdmi-switch",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "dependencies": {
     "@types/serialport": "^8.0.2",
     "serialport": "^10.4.0"
