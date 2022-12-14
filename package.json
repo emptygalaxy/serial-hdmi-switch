@@ -3,7 +3,7 @@
   "version": "1.0.6",
   "dependencies": {
     "@types/serialport": "^8.0.2",
-    "serialport": "^10.4.0"
+    "serialport": "^10.5.0"
   },
   "main": "dist/HDMISwitch.js",
   "types": "dist/HDMISwitch.d.ts",
